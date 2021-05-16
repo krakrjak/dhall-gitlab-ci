@@ -26,6 +26,8 @@ let CacheSpec/toJSON = ../CacheSpec/toJSON.dhall
 
 let ArtifactsSpec/toJSON = ../ArtifactsSpec/toJSON.dhall
 
+let NeedEntry = ../NeedEntry/Type.dhall
+
 in  let Job/toJSON
         : Job → JSON.Type
         = λ(job : Job) →
@@ -38,7 +40,8 @@ in  let Job/toJSON
                 : Map.Type Text (Optional JSON.Type)
                 = toMap
                     { stage = Optional/map Text JSON.Type JSON.string job.stage
-                    , image = Optional/map Image JSON.Type Image/toJSON job.image
+                    , image =
+                        Optional/map Image JSON.Type Image/toJSON job.image
                     , variables = Some
                         ( JSON.object
                             ( Map.map
@@ -60,9 +63,11 @@ in  let Job/toJSON
                         then  None JSON.Type
                         else  Some (stringsArray job.dependencies)
                     , needs =
-                        if    Prelude.List.null Text job.needs
-                        then  None JSON.Type
-                        else  Some (stringsArray job.needs)
+                        Optional/map
+                          (List NeedEntry)
+                          JSON.Type
+                          (λ(needs : List NeedEntry) → JSON.null)
+                          job.needs
                     , tags =
                         Optional/map (List Text) JSON.Type stringsArray job.tags
                     , allow_failure = Some (JSON.bool job.allow_failure)
