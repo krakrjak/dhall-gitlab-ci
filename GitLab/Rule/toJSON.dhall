@@ -6,6 +6,6 @@ let Rule = ./Type.dhall
 
 let Rule/toJSON
     : Rule -> JSON.Type
-    = \(rule : Rule) -> JSON.string rule.`if`
+    = \(rule : Rule) -> JSON.string "if: ${rule.`if`}"
 
 in  Rule/toJSON
