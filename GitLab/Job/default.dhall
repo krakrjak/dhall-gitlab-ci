@@ -10,12 +10,14 @@ let CacheSpec = ../CacheSpec/Type.dhall
 
 let Rule = ../Rule/Type.dhall
 
+let NeedEntry = ../NeedEntry/Type.dhall
+
 in    { stage = None Text
       , image = None Image
       , variables = Prelude.Map.empty Text Text
       , rules = None (List Rule)
       , dependencies = [] : List Text
-      , needs = [] : List Text
+      , needs = None (List NeedEntry)
       , allow_failure = False
       , tags = None (List Text)
       , before_script = None Script

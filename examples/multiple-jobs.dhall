@@ -10,6 +10,8 @@ let Job = GitLab.Job.Type
 
 let renderTop = GitLab.Top.toJSON
 
+let NeedEntry = GitLab.NeedEntry
+
 let buildDir = "build"
 
 let targets = [ "package-1", "package-2" ]
@@ -20,6 +22,10 @@ let mkJob =
         , stage = Some "build"
         , image = Some { name = "alpine:latest", entrypoint = Some [ " " ] }
         , script = [ "echo 'Building ${buildDir}/${target} World'" ]
+        , needs = Some
+          [ NeedEntry.Type.Pipeline
+              { pipeline = "\$PARENT_PIPELINE_ID", job = "${target}-prep" }
+          ]
         }
 
 let jobList

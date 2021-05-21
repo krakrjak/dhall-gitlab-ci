@@ -4,6 +4,10 @@ let Map = Prelude.Map
 
 let JSON = Prelude.JSON
 
+let List/map = Prelude.List.map
+
+let Optional/map = Prelude.Optional.map
+
 let Job = ./Type.dhall
 
 let Image = ../Image/Type.dhall
@@ -18,13 +22,15 @@ let Script = ../Script/Type.dhall
 
 let dropNones = ../utils/dropNones.dhall
 
-let Optional/map = Prelude.Optional.map
-
 let Image/toJSON = ../Image/toJSON.dhall
 
 let CacheSpec/toJSON = ../CacheSpec/toJSON.dhall
 
 let ArtifactsSpec/toJSON = ../ArtifactsSpec/toJSON.dhall
+
+let NeedEntry = ../NeedEntry/Type.dhall
+
+let NeedEntry/toJSON = ../NeedEntry/toJSON.dhall
 
 in  let Job/toJSON
         : Job → JSON.Type
@@ -34,11 +40,18 @@ in  let Job/toJSON
                 = λ(xs : List Text) →
                     JSON.array (Prelude.List.map Text JSON.Type JSON.string xs)
 
+            let needsArray
+                : List NeedEntry → JSON.Type
+                = λ(ns : List NeedEntry) →
+                    JSON.array
+                      (List/map NeedEntry JSON.Type NeedEntry/toJSON ns)
+
             let everything
                 : Map.Type Text (Optional JSON.Type)
                 = toMap
                     { stage = Optional/map Text JSON.Type JSON.string job.stage
-                    , image = Optional/map Image JSON.Type Image/toJSON job.image
+                    , image =
+                        Optional/map Image JSON.Type Image/toJSON job.image
                     , variables = Some
                         ( JSON.object
                             ( Map.map
@@ -60,9 +73,11 @@ in  let Job/toJSON
                         then  None JSON.Type
                         else  Some (stringsArray job.dependencies)
                     , needs =
-                        if    Prelude.List.null Text job.needs
-                        then  None JSON.Type
-                        else  Some (stringsArray job.needs)
+                        Optional/map
+                          (List NeedEntry)
+                          JSON.Type
+                          needsArray
+                          job.needs
                     , tags =
                         Optional/map (List Text) JSON.Type stringsArray job.tags
                     , allow_failure = Some (JSON.bool job.allow_failure)
