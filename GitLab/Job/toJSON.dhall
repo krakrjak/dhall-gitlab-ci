@@ -4,6 +4,10 @@ let Map = Prelude.Map
 
 let JSON = Prelude.JSON
 
+let List/map = Prelude.List.map
+
+let Optional/map = Prelude.Optional.map
+
 let Job = ./Type.dhall
 
 let Image = ../Image/Type.dhall
@@ -18,8 +22,6 @@ let Script = ../Script/Type.dhall
 
 let dropNones = ../utils/dropNones.dhall
 
-let Optional/map = Prelude.Optional.map
-
 let Image/toJSON = ../Image/toJSON.dhall
 
 let CacheSpec/toJSON = ../CacheSpec/toJSON.dhall
@@ -28,6 +30,8 @@ let ArtifactsSpec/toJSON = ../ArtifactsSpec/toJSON.dhall
 
 let NeedEntry = ../NeedEntry/Type.dhall
 
+let NeedEntry/toJSON = ../NeedEntry/toJSON.dhall
+
 in  let Job/toJSON
         : Job → JSON.Type
         = λ(job : Job) →
@@ -35,6 +39,12 @@ in  let Job/toJSON
                 : List Text → JSON.Type
                 = λ(xs : List Text) →
                     JSON.array (Prelude.List.map Text JSON.Type JSON.string xs)
+
+            let needsArray
+                : List NeedEntry → JSON.Type
+                = λ(ns : List NeedEntry) →
+                    JSON.array
+                      (List/map NeedEntry JSON.Type NeedEntry/toJSON ns)
 
             let everything
                 : Map.Type Text (Optional JSON.Type)
@@ -66,7 +76,7 @@ in  let Job/toJSON
                         Optional/map
                           (List NeedEntry)
                           JSON.Type
-                          (λ(needs : List NeedEntry) → JSON.null)
+                          needsArray
                           job.needs
                     , tags =
                         Optional/map (List Text) JSON.Type stringsArray job.tags

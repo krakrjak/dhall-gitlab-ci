@@ -9,4 +9,5 @@
 , Top = ./Top/package.dhall
 , GitSubmoduleStrategy = ./GitSubmoduleStrategy/package.dhall
 , Duration = ./Duration/package.dhall
+, NeedEntry = ./NeedEntry/package.dhall
 }
