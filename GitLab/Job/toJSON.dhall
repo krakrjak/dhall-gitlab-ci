@@ -18,6 +18,8 @@ let CacheSpec = ../CacheSpec/Type.dhall
 
 let Rule = ../Rule/Type.dhall
 
+let Rule/toJSON = ../Rule/toJSON.dhall
+
 let Script = ../Script/Type.dhall
 
 let dropNones = ../utils/dropNones.dhall
@@ -46,6 +48,11 @@ in  let Job/toJSON
                     JSON.array
                       (List/map NeedEntry JSON.Type NeedEntry/toJSON ns)
 
+            let rulesArray
+                : List Rule → JSON.Type
+                = λ(rs : List Rule) →
+                    JSON.array (List/map Rule JSON.Type Rule/toJSON rs)
+
             let everything
                 : Map.Type Text (Optional JSON.Type)
                 = toMap
@@ -66,7 +73,7 @@ in  let Job/toJSON
                         Optional/map
                           (List Rule)
                           JSON.Type
-                          (λ(rules : List Rule) → JSON.null)
+                          (λ(rules : List Rule) → rulesArray rules)
                           job.rules
                     , dependencies =
                         if    Prelude.List.null Text job.dependencies
