@@ -26,6 +26,7 @@ let mkJob =
           [ NeedEntry.Type.Pipeline
               { pipeline = "\$PARENT_PIPELINE_ID", job = "${target}-prep" }
           ]
+        , rules = Some [ { `if` = "\$CI_COMMIT_BRANCH" } ]
         }
 
 let jobList
