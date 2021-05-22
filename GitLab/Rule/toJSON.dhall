@@ -11,10 +11,7 @@ let Rule/toJSON
     = \(rule : Rule) ->
         let obj
             : Map Text JSON.Type
-            = toMap
-                { mapKey = JSON.string "if"
-                , mapValue = JSON.string "${rule.`if`}"
-                }
+            = toMap { `if` = JSON.string "${rule.`if`}" }
 
         in  JSON.object obj
 
