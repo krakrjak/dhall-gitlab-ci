@@ -26,5 +26,6 @@ in    { stage = None Text
       , after_script = None Script
       , cache = None CacheSpec
       , artifacts = None ArtifactsSpec
+      , environment = None Text
       }
     : ./Type.dhall

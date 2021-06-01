@@ -119,6 +119,8 @@ in  let Job/toJSON
                           JSON.Type
                           ArtifactsSpec/toJSON
                           job.artifacts
+                    , environment =
+                        Optional/map Text JSON.Type JSON.string job.environment
                     }
 
             in  JSON.object (dropNones Text JSON.Type everything)

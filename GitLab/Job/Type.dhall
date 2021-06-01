@@ -26,4 +26,5 @@ in  { stage : Optional Text
     , after_script : Optional Script
     , cache : Optional CacheSpec
     , artifacts : Optional ArtifactsSpec
+    , environment : Optional Text
     }
