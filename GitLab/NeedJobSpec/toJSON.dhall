@@ -19,9 +19,7 @@ let NeedJobSpec/toJSON
             : Map.Type Text JSON.Type
             = if    Optional/all Bool Bool/not njs.artifacts
               then  toMap
-                      { job = JSON.string njs.job
-                      , artifacts = JSON.string (Bool/show False)
-                      }
+                      { job = JSON.string njs.job, artifacts = JSON.bool False }
               else  toMap { job = JSON.string njs.job }
 
         in  JSON.object obj
